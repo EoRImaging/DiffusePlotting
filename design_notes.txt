@@ -1,0 +1,15 @@
+Diffuse plotter program design
+
+Want to put each source into its own Python object
+
+class Source(RA, dec, flux, extended, [elements, elementDataArray])
+# RA and dec are float32 degrees
+# flux is float32 Janskies
+# extended is an Uint32 0 or 1
+# If extended is specified as 0, the optional arguments should not be specified
+# If extended is 1, elements should give the number of elements in the diffuse source as a Uint32, and the elementDataArray should be an (N,3)-sized array of float32s, with the columns representing RA, dec, and flux, respectively.
+
+def Gaussian(self, raArray, decArray, [cap])
+# Computes component of the source's Gaussian at every point in coordArray and returns an array of the same size as raArray with computed fluxes.
+# cap, if specified, designates an upper limit on the Gaussian.
+
