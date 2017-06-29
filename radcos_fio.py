@@ -45,8 +45,9 @@ print(data.dtype)
 
 ra, dec, flux = data[0], data[1], data[2]
 pix_data = hp.pixelfunc.ang2pix(32, ra, dec, nest=False, lonlat=True)
+print(pix_data)
 
-map = Basemap(projection='moll', lon_0=0, lat_0=0, #llcrnrlon=min_ra, llcrnrlat=min_dec, urcrnrlon=max_ra, urcrnry=max_dec, resolution='h')
-	map.scatter(pix_data[0], pix_data[1], 3, marker='o', linewidths=.1, c=pix_data[2], cmap=map.cm.coolwarm)
-	#map.colorbar()
-	map.show()
+#map = Basemap(projection='moll', lon_0=0, lat_0=0) #llcrnrlon=min_ra, llcrnrlat=min_dec, urcrnrlon=max_ra, urcrnry=max_dec, resolution='h')
+#map.scatter(pix_data[0], pix_data[1], 3, marker='o', linewidths=.1, c=pix_data[2], cmap=map.cm.coolwarm)
+#map.colorbar()
+#map.show()
