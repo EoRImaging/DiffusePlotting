@@ -29,7 +29,8 @@ with open(filename) as f:
 			linedata = np.asarray(linedata[0:3],dtype=np.float32)
 			data = np.concatenate((data,linedata),axis=0)
 			continue;
-			# TBI
+		# If the source is extended, take all data following the
+		# header and append onto final array
 		linedata = np.asarray(linedata[5:],dtype=np.float32)
 		linedata = linedata.reshape(-1,3)
 		dprint(linedata.shape)
