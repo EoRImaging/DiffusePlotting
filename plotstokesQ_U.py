@@ -9,7 +9,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import os
-import plothealpix_map_coords
 import plothealpix_map
 
 
@@ -77,5 +76,5 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
         raise ValueError("Do you want to save or show the image?")
     # using the function defined in plothealpix_map to graph the data on a globe.
     plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, 'nest')
-    plt.savefig()
+    # plt.savefig()
     return x_stokes, y_stokes
