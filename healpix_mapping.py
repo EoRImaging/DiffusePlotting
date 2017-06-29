@@ -12,16 +12,21 @@ import os
 import warnings
 import matplotlib.cbook
 
-
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
-def mapping(nside, pixelnum, plotfile, data, nest_or_ring='ring'):
+def healpix_converter(filename, ra, dec, flux):
     # file pixels may be organized as ring or nest
-    print "diffuse plotting master branch version"
+    ra[np.where(ra > 180)] -= 360
+    pixels = hp.pixelfunc.ang2pix(32, ra, dec, nest=False, lonlat=False)
+    print ra, dec
+    print pixels
+
+    return
+
     if nest_or_ring is 'ring':
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=False, lonlat=True)
     if nest_or_ring is 'nest':
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=True, lonlat=True)
-    ra[np.where(ra > 180)] -= 360
+
     # plot of Galactic gas with coordinate projection
     min_ra = np.min(ra)
     print min_ra
