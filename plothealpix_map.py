@@ -13,6 +13,7 @@ import os
 
 def mapping(nside, pixelnum, plotfile, data, nest_or_ring='ring'):
     # file pixels may be organized as ring or nest
+    print "diffuse plotting master branch version"
     if nest_or_ring is 'ring':
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=False, lonlat=True)
     if nest_or_ring is 'nest':
