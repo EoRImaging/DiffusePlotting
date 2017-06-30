@@ -12,11 +12,12 @@ import os
 import plothealpix_map
 
 
-def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None, save_show=None):
+def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None,
+                  save_show='show', projection='ortho'):
     if not filename_U.endswith('.fits'):
-        raise ValueError("Stokes U file is not a fits file. Files must be .fits files")
+        raise ValueError('Stokes U file is not a fits file. Files must be .fits files')
     if not filename_Q.endswith('.fits'):
-        raise ValueError("Stokes Q file is not a fits file. Files must be .fits files")
+        raise ValueError('Stokes Q file is not a fits file. Files must be .fits files')
     # get header and data info from the fits file
     contents_Q = fits.open(filename_Q)
     pixelnum_Q = contents_Q[1].header['naxis1']
@@ -31,13 +32,13 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
     ordering_U = contents_U[1].header['ordering']
 
     if pixelnum_U != pixelnum_Q:
-        raise ValueError("files do not have same number of pixels.")
+        raise ValueError('files do not have same number of pixels.')
 
     if nside_U != nside_Q:
-        raise ValueError("files do not have nside.")
+        raise ValueError('files do not have nside.')
 
     if ordering_U != ordering_Q:
-        raise ValueError("files do not have nside.")
+        raise ValueError('files do not have nside.')
 
     # extract data from specified files
     pixels_Q = data_Q.field('PIXEL')
@@ -46,7 +47,7 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
     signal_U = data_U.field('SIGNAL')
 
     if np.any(pixels_Q != pixels_U):
-        raise ValueError("files do not have set of pixels.")
+        raise ValueError('files do not have set of pixels.')
 
     # Finding x and y from Stokes parameters U and Q
     Q = signal_Q
@@ -75,14 +76,14 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
     plt.hist2d(x_stokes, y_stokes, bins=150, norm=LogNorm())
     plt.colorbar()
     # either show the graph, or save it to a location.
-    if save_show is None or save_show == 'show':
+    if save_show == 'show':
         plt.show()
     elif save_show == 'save':
         plt.savefig(plotfile)
-        print "saved plot to " + plotfile
+        print 'saved plot to ' + plotfile
     else:
-        raise ValueError("Do you want to save or show the image?")
+        raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
     # using the function defined in plothealpix_map to graph the data on a globe.
-    plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, ordering=ordering_Q)
+    plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, ordering=ordering_Q, projection=projection)
     # plt.savefig()
     return x_stokes, y_stokes
