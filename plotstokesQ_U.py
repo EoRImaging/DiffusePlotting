@@ -19,26 +19,34 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
         raise ValueError("Stokes Q file is not a fits file. Files must be .fits files")
     # get header and data info from the fits file
     contents_Q = fits.open(filename_Q)
-    pixelnum_Q = contents_Q[1].header['naxis1'] * contents_Q[1].header['naxis2']
+    pixelnum_Q = contents_Q[1].header['naxis1']
     data_Q = contents_Q[1].data
     nside_Q = contents_Q[1].header['nside']
+    ordering_Q = contents_Q[1].header['ordering']
 
     contents_U = fits.open(filename_U)
-    pixelnum_U = contents_U[1].header['naxis1'] * contents_U[1].header['naxis2']
+    pixelnum_U = contents_U[1].header['naxis1']
     data_U = contents_U[1].data
     nside_U = contents_U[1].header['nside']
+    ordering_U = contents_U[1].header['ordering']
 
-    if pixelnum_U == pixelnum_Q and nside_U == nside_Q:
-        pixelnum_Q = pixelnum_U
-        nside_Q = nside_U
-    if not pixelnum_U == pixelnum_Q and nside_U == nside_Q:
-        raise ValueError("files do not have same indices.")
+    if pixelnum_U != pixelnum_Q:
+        raise ValueError("files do not have same number of pixels.")
+
+    if nside_U != nside_Q:
+        raise ValueError("files do not have nside.")
+
+    if ordering_U != ordering_Q:
+        raise ValueError("files do not have nside.")
 
     # extract data from specified files
     pixels_Q = data_Q.field('PIXEL')
     signal_Q = data_Q.field('SIGNAL')
     pixels_U = data_U.field('PIXEL')
     signal_U = data_U.field('SIGNAL')
+
+    if np.any(pixels_Q != pixels_U):
+        raise ValueError("files do not have set of pixels.")
 
     # Finding x and y from Stokes parameters U and Q
     Q = signal_Q
@@ -75,6 +83,6 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
     else:
         raise ValueError("Do you want to save or show the image?")
     # using the function defined in plothealpix_map to graph the data on a globe.
-    plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, 'nest')
+    plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, ordering=ordering_Q)
     # plt.savefig()
     return x_stokes, y_stokes
