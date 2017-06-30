@@ -13,7 +13,6 @@ warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 def mapping(nside, pixelnum, plotfile, data, ordering='ring', projection='ortho'):
 
     # file pixels may be organized as ring or nest
-    print "diffuse plotting master branch version"
     if ordering.lower() == 'ring':
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=False, lonlat=True)
     if ordering.lower() == 'nested':
