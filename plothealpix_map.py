@@ -21,6 +21,11 @@ def mapping(nside, pixelnum, plotfile, data, nest_or_ring='ring'):
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=False, lonlat=True)
     if nest_or_ring is 'nest':
         ra, dec = hp.pixelfunc.pix2ang(int(nside), pixelnum, nest=True, lonlat=True)
+    min_ra = np.min(ra)
+    print min_ra
+    max_ra = np.max(ra)
+    print max_ra
+
     ra[np.where(ra > 180)] -= 360
     # plot of Galactic gas with coordinate projection
     min_ra = np.min(ra)
@@ -38,13 +43,24 @@ def mapping(nside, pixelnum, plotfile, data, nest_or_ring='ring'):
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
     # llc and urc are x & y ranges, and are specific to a location.
     # The latitude and longitude settings are part of basemap.
-    m = Basemap(projection='hammer', llcrnrlon=-11, llcrnrlat=-15, urcrnrlon=13.5, urcrnrlat=-37, resolution='h', epsg=5520)
-    # m = Basemap(projection='hammer', lon_0=mean_ra, lat_0=mean_dec, llcrnrlon=min_ra, llcrnrlat=min_dec, urcrnrlon=max_ra, urcrnry=max_dec, resolution='h', epsg=5520)
-    x, y = m(ra, dec)
+    # m = Basemap(projection='hammer', llcrnrlon=, llcrnrlat=-30, urcrnrlon=90,
+                # urcrnrlat=-50, resolution='h', epsg=5520)
+    # m = Basemap(projection='ortho', lon_0=mean_ra, lat_0=mean_dec)  # llcrnrlon=min_ra, llcrnrlat=min_dec, urcrnrlon=max_ra, urcrnry=max_dec, resolution='h', epsg=5520)
+    # x, y = m(ra, dec)
     # draw parallels and meridians. Labels are 1/0 as [Top,bottom,right,left]
-    m.drawparallels(np.arange(-90., 120., 10.), labels=[1, 0, 0, 0])
-    m.drawmeridians(np.arange(0., 420., 10.), labels=[0, 0, 0, 1])
+    # m.drawparallels(np.arange(-90., 120., 10.), labels=[1, 0, 0, 0])
+    # m.drawmeridians(np.arange(0., 420., 10.), labels=[0, 0, 0, 1])
     # creates a scatter plot of the selected data on a globe.
-    m.scatter(x, y, 3, marker='o', linewidths=.1, c=data, cmap=plt.cm.coolwarm)
-    m.colorbar()
-    plt.show(plotfile)
+    # m.scatter(x, y, 3, marker='o', linewidths=.1, c=data, cmap=plt.cm.coolwarm)
+    # m.colorbar()
+
+    new_map = hp.visufunc.mollview(map=None, fig=None, rot=None, coord=None, unit='',
+                                        xsize=800, title='Mollweide view', nest=False,
+                                         min=None, max=None, flip='astro', remove_dip=False,
+                                          remove_mono=False, gal_cut=0, format='%g',
+                                           format2='%g', cbar=True, cmap=None, notext=False,
+                                            norm=None, hold=False, margins=None, sub=None,
+                                             return_projected_map=True)
+    x, y = new_map(ra, dec)
+    new_map.scatter(x, y, 3, marker='o', linewidths=.1, c=data, cmap=plt.cm.coolwarm)
+    # plt.show(plotfile)

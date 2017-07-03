@@ -11,14 +11,18 @@ from matplotlib.colors import LogNorm
 import os
 import warnings
 import matplotlib.cbook
+import radcos_fio
 
+data_array = radcos_fio.data()
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
-def healpix_converter(filename, ra, dec, flux):
-    # file pixels may be organized as ring or nest
-    ra[np.where(ra > 180)] -= 360
-    pixels = hp.pixelfunc.ang2pix(32, ra, dec, nest=False, lonlat=False)
-    print ra, dec
-    print pixels
+def healpix_converter(filename):
+    # file pixels may be organized as ring or nest. Currently on nest
+    ra = (np.pi * 2 / 360) * data_array[:,0]
+    dec = (np.pi * 2 / 360) * data_array[:,1]
+    flux = data_array[:,2]
+    ra[np.where(ra > np.pi)] -= 2 * np.pi
+    pixel_refs = hp.pixelfunc.ang2pix(32, ra, dec, nest=False, lonlat=False)
+    print pixel_refs
 
     return
 
