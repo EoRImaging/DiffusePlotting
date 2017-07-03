@@ -13,9 +13,9 @@ import warnings
 import matplotlib.cbook
 import radcos_fio
 
-data_array = radcos_fio.data()
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 def healpix_converter(filename):
+    data_array = radcos_fio.data()
     # file pixels may be organized as ring or nest. Currently on nest
     ra = (np.pi * 2 / 360) * data_array[:,0]
     dec = (np.pi * 2 / 360) * data_array[:,1]

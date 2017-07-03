@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import os
 import plothealpix_map
+import healpix_to_RA_dec
 
 
 def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None,
@@ -73,9 +74,14 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
     plotfile_base = os.path.join(plotdirectory, plotfile_base)
     plotfile = plotfile_base + '.png'
     # manipulate histogram for number of bins, color scheme.
+    if filename_Q.endswith('.fits'):
+        healpix_to_RA_dec.healpix_to_RA_dec(nside_Q, pixels_Q, ordering=ordering_Q)
+    plothealpix_map.mapping(ra, dec, plotfile, theta, projection=projection,
+                            save_show=save_show)
     plt.hist2d(x_stokes, y_stokes, bins=150, norm=LogNorm())
     plt.colorbar()
-    # either show the graph, or save it to a location.
+
+    # either show the graphs, or save them to a location.
     if save_show == 'show':
         plt.show()
     elif save_show == 'save':
@@ -83,7 +89,8 @@ def plotstokesQ_U(filename_Q, filename_U, plotfile_base=None, plotdirectory=None
         print 'saved plot to ' + plotfile
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
-    # using the function defined in plothealpix_map to graph the data on a globe.
-    plothealpix_map.mapping(nside_Q, pixels_Q, plotfile, theta, ordering=ordering_Q, projection=projection)
+    # Using the function defined in plothealpix_map to graph the data on a globe.
+    # Will save or show the plothealpix_map graph depending on option selected for histogram.
+
     # plt.savefig()
     return x_stokes, y_stokes
