@@ -102,8 +102,8 @@ def mapping(ra, dec, plotfile, data_vals, projection='ortho', save_show='show'):
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
 
     # draw parallels and meridians. Labels are 1/0 as [Top,bottom,right,left]
-    m.drawparallels(np.arange(-90., 120., 10.), labels=[1, 0, 0, 0])
-    m.drawmeridians(np.arange(0., 420., 10.), labels=[0, 0, 0, 1])
+    m.drawparallels(np.arange(-90., 120., 5.), labels=[1, 0, 0, 0])
+    m.drawmeridians(np.arange(0., 420., 5.), labels=[0, 0, 0, 1])
     # creates a scatter plot of the selected data on a globe.
 
     m.scatter(x, y, 3, marker='o', linewidths=.1, c=data_vals, cmap=plt.cm.coolwarm)
