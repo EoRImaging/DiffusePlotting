@@ -9,7 +9,8 @@ import healpix_to_RA_dec
 
 warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 # This module can map various types of data onto a spherical projection.
-def mapping(ra, dec, plotfile, data_vals, projection='ortho', save_show='show'):
+# plotfile is the name of the saved plot. data_vals is the third dimension to be plotted.
+def mapping(ra, dec, data_vals, newplotfile_base=None, projection='ortho', save_show='show', file_extension='.png'):
 
     ra[np.where(ra > 180)] -= 360
     # plot of Galactic gas with coordinate projection
@@ -108,5 +109,12 @@ def mapping(ra, dec, plotfile, data_vals, projection='ortho', save_show='show'):
 
     m.scatter(x, y, 3, marker='o', linewidths=.1, c=data_vals, cmap=plt.cm.coolwarm)
     m.colorbar()
-        # either show the graphs, or save them to a location.
-    plt.show()
+    newplotfile = newplotfile_base + file_extension
+    # either show the graphs, or save them to a location.
+    if save_show == 'show':
+        plt.show()
+    elif save_show == 'save':
+        plt.savefig(newplotfile)
+        print 'saved mapped data to ' + newplotfile
+    else:
+        raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
