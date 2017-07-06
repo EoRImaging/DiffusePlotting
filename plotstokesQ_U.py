@@ -47,14 +47,14 @@ def plotstokesQ_U(filename_Q, filename_U, histogram_plotfile_base=None, map_plot
         os.makedirs(plotdirectory)
     histogram_plotfile_base = os.path.join(plotdirectory, histogram_plotfile_base)
     map_plotfile_base = os.path.join(plotdirectory, map_plotfile_base)
-    map_plotfile = map_plotfile_base + file_extension
     histogram_plotfile = histogram_plotfile_base + file_extension
+    map_plotfile = map_plotfile_base + file_extension
 
     if filename_Q.endswith('.fits'):
         ra, dec = healpix_to_RA_dec.healpix_to_RA_dec(nside_Q, pixels_Q, ordering=ordering_Q)
 
     plothealpix_map.mapping(ra, dec, theta, newplotfile_base=map_plotfile_base, projection=projection,
-                                            save_show=save_show)
+                                            save_show=save_show, file_extension=file_extension)
     # manipulate histogram for number of bins, color scheme.
     plt.hist2d(x_stokes, y_stokes, bins=150, norm=LogNorm())
     plt.colorbar()
@@ -64,7 +64,7 @@ def plotstokesQ_U(filename_Q, filename_U, histogram_plotfile_base=None, map_plot
         plt.show(histo_plot)
     elif save_show == 'save':
         plt.savefig(histogram_plotfile)
-        print 'saved histogram to ' + histogram_plotfile
+        print 'saved polarization histogram to ' + histogram_plotfile
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
     # Using the function defined in plothealpix_map to graph the data on a globe.

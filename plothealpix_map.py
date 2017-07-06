@@ -115,6 +115,6 @@ def mapping(ra, dec, data_vals, newplotfile_base=None, projection='ortho', save_
         plt.show()
     elif save_show == 'save':
         plt.savefig(newplotfile)
-        print 'saved mapped data to ' + newplotfile
+        print 'saved mapped polarization to ' + newplotfile
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
