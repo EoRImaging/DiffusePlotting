@@ -26,8 +26,8 @@ Q = (np.power(ax, 2) - np.power(ay,2))
 U = (2 * ax * ay)
 newQ = np.power(Q, 2)
 newU = np.power(U, 2)
-ay2 = np.sqrt(-.5*Q + (np.sqrt(np.power(Q, 2) + np.power(U, 2)) / 2))
-if all(ay)==all(ay2):
+ay1 = np.sqrt(-.5*Q + (np.sqrt(np.power(Q, 2) + np.power(U, 2)) / 2))
+if all(ay)==all(ay1):
     print "success!"
 else:
     print "not a success!"
