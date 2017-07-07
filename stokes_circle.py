@@ -19,11 +19,15 @@ def coords(x, y):
     return [ax, ay]
 plt.show()
 ax, ay = coords('ax', 'ay')
-ax = np.array(ax)
-ay = np.array(ay)
+ax = np.array(ax);
+ay = np.array(ay);
 # print np.power(ax, 2), np.power(ay, 2)
-Q = np.power(ax, 2) - np.power(ay,2)
-U = 2 * ax * ay
-ay2 = -.5 + (np.sqrt(np.power(Q, 2) + np.power(U, 2)) / 2)
-arc = plt.plot(Q, U, 'bo')
-plt.show(arc)
+Q = (np.power(ax, 2) - np.power(ay,2))
+U = (2 * ax * ay)
+newQ = np.power(Q, 2)
+newU = np.power(U, 2)
+ay2 = np.sqrt(-.5*Q + (np.sqrt(np.power(Q, 2) + np.power(U, 2)) / 2))
+if all(ay)==all(ay2):
+    print "success!"
+else:
+    print "not a success!"
