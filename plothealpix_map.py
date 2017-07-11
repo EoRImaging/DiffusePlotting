@@ -2,15 +2,21 @@ from mpl_toolkits.basemap import Basemap, projection_params
 import numpy as np
 import healpy as hp
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import warnings
 import matplotlib.cbook
 import haversine_function
 import healpix_to_RA_dec
+import matplotlib.tri as tri
+import os
+import re
+import retrieve_name
+
 
 warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 # This module can map various types of data onto a spherical projection.
 # plotfile is the name of the saved plot. data_vals is the third dimension to be plotted.
-def mapping(ra, dec, data_vals, newplotfile_base=None, projection='ortho', save_show='show', file_extension='.png'):
+def mapping(ra, dec, data_vals, var_name, newplotfile_base=None, projection='ortho', save_show='show', file_extension='.png'):
 
     ra[np.where(ra > 180)] -= 360
     # plot of Galactic gas with coordinate projection
@@ -21,8 +27,8 @@ def mapping(ra, dec, data_vals, newplotfile_base=None, projection='ortho', save_
     min_dec = np.min(dec)
     max_dec = np.max(dec)
     mean_dec = np.mean(dec)
-    print('RA min, max, mean: ', min_ra, max_ra, mean_ra)
-    print('Dec min, max, mean: ', min_dec, max_dec, mean_dec)
+    # print('RA min, max, mean: ', min_ra, max_ra, mean_ra)
+    # print('Dec min, max, mean: ', min_dec, max_dec, mean_dec)
 
     print('{p} projection'.format(p=projection))
     if 'no corners' in projection_params[projection]:
@@ -97,24 +103,23 @@ def mapping(ra, dec, data_vals, newplotfile_base=None, projection='ortho', save_
         m = Basemap(projection=projection, llcrnrlon=min_ra, llcrnrlat=min_dec,
                     urcrnrlon=max_ra, urcrnrlat=max_dec, resolution=None)
 
-
     fig = plt.figure()
     x, y = m(ra, dec)
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-
+    # types of contour plots are pcolor, and contourf.
+    m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
     # draw parallels and meridians. Labels are 1/0 as [Top,bottom,right,left]
     m.drawparallels(np.arange(-90., 120., 5.), labels=[1, 0, 0, 0])
     m.drawmeridians(np.arange(0., 420., 5.), labels=[0, 0, 0, 1])
-    # creates a scatter plot of the selected data on a globe.
-
-    m.scatter(x, y, 3, marker='o', linewidths=.1, c=data_vals, cmap=plt.cm.coolwarm)
     m.colorbar()
-    newplotfile = newplotfile_base + file_extension
+    var_name = ''.join(var_name)
+    plt.title('ObsID {} {} map'.format([int(s) for s in re.findall('\d+', newplotfile_base)], var_name))
+    newplotfile = newplotfile_base + '_' + var_name + file_extension
     # either show the graphs, or save them to a location.
     if save_show == 'show':
         plt.show()
     elif save_show == 'save':
         plt.savefig(newplotfile)
-        print 'saved mapped polarization to ' + newplotfile
+        print 'saved mapped data to ' + newplotfile
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
