@@ -1,7 +1,6 @@
 from gaussfuncs import makeGauss
 import healpy as hp
 import numpy as np
-from plothealpix_map import mapping
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from derp import *
@@ -9,10 +8,10 @@ import os, errno, re
 import cartopy.crs as ccrs
 
 # Hard-coded quantities; to be fixed
-fname = './catalogs/1130788624_source_array.sav'
-variances = [10000.0, 30000.0]
-nside = 1024
-obsID = fname[11:21] # TODO: replace with smarter regexp
+#fname = './catalogs/1130788624_source_array.sav'
+#variances = [10000.0, 30000.0]
+#nside = 1024
+#obsID = fname[11:21] # TODO: replace with smarter regexp
 
 def crdir(directory):
     try: 
@@ -70,16 +69,18 @@ def gaussify(sra, sdec, sflux, var, nside, obsID):
     #    gaussplot(ra,dec,flux,100.0,var,nside,obsID)
     ### END def gaussify
 
-def gaussplot(ra,dec,amp,cap,var,nside,obsID):
+def gaussplot(ra,dec,amp,cap,var,nside,obsID,savePlot=True):
     proj = ccrs.PlateCarree()
     ax = plt.axes(projection=proj)
     plt.tricontourf(ra,dec,np.clip(amp,None,cap),100,cmap='Greys',transform=proj)
     plt.colorbar()
+    
+    # Label the plot all pretty-like
     plt.ylabel('Declination ($^\circ$)')
     plt.xlabel('Right ascension ($^\circ$)')
-    plt.title('obsID: '+obsID+'\n var = '+str(var)+' cap = '+str(cap)+' nside='+str(nside))
-    ax.set_xticks([45,60,75,90,105,120])
-    ax.set_yticks([-20,-30,-40,-50,-60,-70])
+    plt.title('obsID: '+obsID+'\n var = '+str(var)+'$^\circ$ cap = '+str(cap)+' nside='+str(nside))
+    #ax.set_xticks([45,60,75,90,105,120])
+    #ax.set_yticks([-20,-30,-40,-50,-60,-70])
     gl = ax.gridlines(crs=proj)
     gl.xlabels_bottom=True
     gl.xlines=True
@@ -88,12 +89,19 @@ def gaussplot(ra,dec,amp,cap,var,nside,obsID):
     gl.ylines=True
     #gl.ylocator
     #gl.xformatter = LONGITUDE_FORMATTER
-    #plt.scatter(srcs['ra'],srcs['dec'],s=srcs['flux'],alpha=0.3)
-#plt.savefig('./Plots/OG_run1.png')
-    plotname = './gaussplots/run1_prelog'+str(nside)+'_var'+str(var)+'_cap' + str(cap) + '_projected.png'
-    print('Saving '+plotname)
-    plt.savefig(plotname)
-    plt.close()
+    
+    # Plot location of Pictor A galaxy
+    #plt.plot((5.0+19.0/60.0+49.7/3600.0)*360.0/24.0,-(45.0+46.0/60.0+44.0/3600.0),'ro',ms=1.0)
+
+    if savePlot:
+        plotname = './gaussplots/'+obsID+'_nside'+str(nside)+'_var'+str(var)+'_cap' + str(cap) + '_projected.png'
+        print('Saving '+plotname)
+        plt.savefig(plotname)
+        plt.close()
+        return
+    else:
+        print('ACK NOT IMPLEMENTED DO NOT DO THAT')
+        return plt, ax, gl
 #   
 
 def makeGaussPlot(fname, nside, var, cap,saveData=True):

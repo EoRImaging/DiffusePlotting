@@ -17,8 +17,6 @@ def computeGauss(amp, dist, var):
     #    print('var: '+str(var))
     return prod
     
-
-
 def makeGauss(nside, ra, dec, amp, varparam=np.sqrt(2*np.pi),bounds=None):#radius=6447797.0):
 	m = np.arange(hp.nside2npix(nside))
 	m_ra, m_dec = hp.pix2ang(nside, m, lonlat=True)

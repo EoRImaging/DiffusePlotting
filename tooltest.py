@@ -1,9 +1,10 @@
 from gtools import *
 
-#fname = './catalogs/1130788624_source_array.sav'
-fname = './catalogs/1130784064_source_array.sav'
-#fname = './catalogs/1130781304_source_array.sav'
+names = ['./catalogs/1130788624_source_array.sav']#, './catalogs/1130784064_source_array.sav', './catalogs/1130781304_source_array.sav']
 nside = 1024
-var = 30000.0
-cap = 100.0
-makeGaussPlot(fname, nside, var, cap)
+variances = [0.1]#[0.3, 0.1, 0.03, 0.01]
+caps = [100.0, 50.0, 20.0]
+for fname in names:
+    for var in variances:
+        for cap in caps:
+            makeGaussPlot(fname, nside, var, cap)
