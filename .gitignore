@@ -103,5 +103,7 @@ ENV/
 .DS_Store
 
 *.sav
-
+*.eps
+*.fits
+*.txt
 *.png
