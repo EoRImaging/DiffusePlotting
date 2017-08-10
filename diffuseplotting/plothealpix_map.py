@@ -12,13 +12,13 @@ import matplotlib.tri as tri
 import matplotlib.colors as colors
 import os
 import re
-import stokes_math
 
 
 warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 # This module can map various types of data onto a spherical projection.
 # plotfile is the name of the saved plot. data_vals is the third dimension to be plotted.
-def mapping(ra, dec, data_vals, var_name, newplotfile_base=None, projection='ortho', save_show='show', file_extension='.png'):
+# def mapping(ra, dec, data_vals, var_name, map_file_name=None, projection='ortho', save_show='show', file_extension='.png'):
+def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None, projection='ortho', save_show='show'):
 
     ra[np.where(ra > 180)] -= 360
     # plot of Galactic gas with coordinate projection
@@ -114,15 +114,16 @@ def mapping(ra, dec, data_vals, var_name, newplotfile_base=None, projection='ort
         m.scatter(x, y, 3, marker='.', linewidths=.1, c=data_vals) #, cmap=plt.cm.plasma)  # norm=LogNorm())
         print "scatter"
     else:
-        m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, bins='log', norm=colors.LogNorm())
-        #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
+        #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, bins='log')  # norm=colors.LogNorm())
+        # m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
+        m.contourf(x, y, data_vals, tri=True)
         m.colorbar()
     # draw parallels and meridians. Labels are 1/0 as [Top,bottom,right,left]
     m.drawparallels(np.arange(-90., 120., 5.), labels=[1, 0, 0, 0])
     m.drawmeridians(np.arange(0., 420., 5.), labels=[0, 0, 0, 1])
-    var_name = ''.join(var_name)
-    if newplotfile_base is not None:
-        plt.title('ObsID {} {} map'.format([int(s) for s in re.findall('\d+', newplotfile_base)], var_name))
+    # var_name = ''.join(var_name)
+    if obsID is not None:
+        plt.title('{} {} map'.format(obsID, var_name))
     else:
         plt.title('{} map'.format(var_name))
     # either show the graphs, or save them to a location.
@@ -131,8 +132,8 @@ def mapping(ra, dec, data_vals, var_name, newplotfile_base=None, projection='ort
     elif save_show == 'none':
         print "polarization map not displayed"
     elif save_show == 'save':
-        newplotfile = newplotfile_base + '_' + var_name + file_extension
-        plt.savefig(newplotfile)
-        print 'saved mapped data to ' + newplotfile
+        new_map_file = map_file_name
+        plt.savefig(new_map_file)
+        print 'saved mapped data to ' + new_map_file
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')

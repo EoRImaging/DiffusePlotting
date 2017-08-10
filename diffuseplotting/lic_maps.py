@@ -12,14 +12,11 @@ import matplotlib.pyplot as plt
 # automatically focuses at center
 
 
-def LIC(dpi, size, length=31, full_image=True, disp_drapery='save', name_of_plot='flow-image.png'):
-    filename_Q = 'data/4pol/1130789944_uniform_Residual_Q_HEALPix.fits'
-    filename_U = 'data/4pol/1130789944_uniform_Residual_U_HEALPix.fits'
-    filename_I = 'data/4pol/1130789944_uniform_Residual_I_HEALPix.fits'
-
-    signal_Q, signal_U, signal_I, ra, dec =\
-        fits_data_extraction.fits_extractor(filename_Q, filename_U, filename_I)
-    K, theta, x_stokes, y_stokes = stokes_math.math(signal_I, signal_Q, signal_U)
+def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=True,
+        disp_drapery='save', name_of_plot='flow-image.png'):
+    #filename_Q = 'data/4pol/1130789944_uniform_Residual_Q_HEALPix.fits'
+    #filename_U = 'data/4pol/1130789944_uniform_Residual_U_HEALPix.fits'
+    #filename_I = 'data/4pol/1130789944_uniform_Residual_I_HEALPix.fits'
 
     dpi = dpi
     if full_image is True:
@@ -69,20 +66,6 @@ def LIC(dpi, size, length=31, full_image=True, disp_drapery='save', name_of_plot
     xval = griddata((ra, dec), x_stokes, (x, y), method='nearest')
     yval = griddata((ra, dec), y_stokes, (x, y), method='nearest')
 
-    #this is just some graphing stuff
-    xval_copy = copy.copy(xval)
-    xval_copy = xval_copy.flatten()
-    yval_copy = copy.copy(yval)
-    yval_copy = yval_copy.flatten()
-    K_copy = np.sqrt(xval_copy**2 + yval_copy**2)
-    plothealpix_map.mapping(x, y, K_copy, 'K_copy', save_show=disp_drapery,
-                            newplotfile_base='1130789944_uniform_Residual',
-                            file_extension='.eps', projection='cyl')
-    #plothealpix_map.mapping(ra, dec, K, 'K', )
-    #plot = plt.tricontourf(x, y, theta_copy, 50, cmap=plt.cm.plasma)
-    # plt.show()
-    #plt.savefig('suzan', dpi=dpi)
-
     xval = np.reshape(xval, (x_size, y_size))
     yval = np.reshape(yval, (x_size, y_size))
 
@@ -121,10 +104,13 @@ def LIC(dpi, size, length=31, full_image=True, disp_drapery='save', name_of_plot
 
         plt.clf()
         plt.axis('off')
-        plt.figimage(image)
+        plt.title('{} drapery'.format(obsID))
+        plt.figimage(image, resize=True)
         plt.gcf().set_size_inches((x_size / float(dpi), y_size / float(dpi)))
         if disp_drapery == 'save':
-            plt.savefig(name_of_plot, dpi=dpi)
+            plt.gcf().savefig(name_of_plot)
+            # plt.savefig(name_of_plot, dpi=dpi)
+            # plt.imsave(name_of_plot, image)
             print 'saved drapery to ' + name_of_plot
         elif disp_drapery == 'show':
             plt.show()
