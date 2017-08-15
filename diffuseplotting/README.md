@@ -16,6 +16,7 @@ run_data(filename_Q, filename_U, filename_I, plot_variable=None,
             histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None)
 ```
 **Parameter Options**
+
   **Filename_Q, filename_U, filename_I**:  3 files of a typical 4pol data set.  They are configured to
   use .fits files.
 
@@ -137,5 +138,3 @@ This module creates a 'drapery' plot of stokes linear polarizations.  The direct
     **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
 
     Note: The option interp_theta default is to save the file.  This is because there are some artifacts that sometimes appear when plotting the data using the plot_map module, that are only visible if the plot is saved to a publication-quality file type such as jpg, pdf or eps.
-
-    
