@@ -7,11 +7,13 @@ of a set of Stokes data files, I, Q, and U.
 
 The run_data module is a wrapper that allows you to create multiple kinds of plots of the same
 data.  It expects to be given fits files.
-'''
+
+```
 run_data.run_data(filename_Q, filename_U, filename_I, plot_variable=None,
              save_show='show', graph_selection='all', file_extension='.png', projection='cyl', transparency=1
              histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None, directory=None)
-'''
+```
+
   Filename_Q, filename_U, filename_I:  3 files of a typical 4pol data set.  They are configured to
   use .fits files.
 
