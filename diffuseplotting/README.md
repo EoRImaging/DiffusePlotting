@@ -9,15 +9,18 @@ The run_data module is a wrapper that allows you to create multiple kinds of plo
 data.  It expects to be given fits files.
 
 ```
-run_data.run_data(filename_Q, filename_U, filename_I, plot_variable=None,
-             save_show='show', graph_selection='all', file_extension='.png', projection='cyl', transparency=1
-             histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None, directory=None)
+run_data(filename_Q, filename_U, filename_I, plot_variable=None,
+            save_show='show', graph_selection='all', file_extension='.png', projection='cyl', transparency=1,
+            interp_theta=False, lic_length=1000, lic_width=2., directory=None,
+            histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None)
 ```
-
-  Filename_Q, filename_U, filename_I:  3 files of a typical 4pol data set.  They are configured to
+  ```
+  Filename_Q, filename_U, filename_I
+  ```
+  :  3 files of a typical 4pol data set.  They are configured to
   use .fits files.
 
-  plot_variable: the variable to be plotted for the plothealpix_map module.  The other two plotting
+  plot_variable: the variable to be plotted for the plot_map module.  The other two plotting
   modules plot specific variables.  Default is None.
 
   save_show: Options are 'save' and 'show'. 'Save' option saves the plots you've chosen, as whatever type
@@ -28,7 +31,7 @@ run_data.run_data(filename_Q, filename_U, filename_I, plot_variable=None,
   file_extension: Type of file to be saved. Not necessary if save_show option 'show' is selected.
   Default is .png.
 
-  projection: The map projection for the mapping module plothealpix_map. The default for run_data is 'cyl'.
+  projection: The map projection for the mapping module plot_map. The default for run_data is 'cyl'.
   'ortho' is a good projection if you want to see curved RA and Dec lines, while 'cyl' matches up with the drapery plot.
   Other projections include 'ortho', 'cyl', 'merc', 'moll' and more, detailed in the matplotlib package Basemap.
 
@@ -41,9 +44,10 @@ run_data.run_data(filename_Q, filename_U, filename_I, plot_variable=None,
   directory: If you want to put the plots in a different directory than the current working directory.
   If a directory with the name inputted doesn't exist, one will be created.
 
-
-plothealpix_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
+```
+plot_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
             projection='ortho', save_show='show', full_image=True)
+```
 
   This module creates a map projected onto a sphere of some variable.
 
@@ -58,7 +62,7 @@ plothealpix_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=
 
   map_file_name: The name of the file to be written out.
 
-  projection: The map projection for the mapping module plothealpix_map. The default for run_data is 'cyl'.
+  projection: The map projection for the mapping module plot_map. The default for run_data is 'cyl'.
   'ortho' is a good projection if you want to see curved RA and Dec lines, while 'cyl' matches up with the drapery plot.
   Other projections include 'ortho', 'cyl', 'merc', 'moll' and more, detailed in the matplotlib package Basemap.
 
@@ -67,9 +71,11 @@ plothealpix_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=
 
   full_image: If True, all the data will be displayed.  If False, the maximum rectangular shape that fits inside the circle of data is selected. This area is selected with the module fits_data_extraction.cutout_square(ra, dec).
 
-stokes_tester.plotstokesQU(obsID, x_stokes, y_stokes, ra, dec,
+```
+stokes_histogram.plotstokesQU((obsID, x_stokes, y_stokes, ra, dec,
                  new_histogram_filename=None, directory=None,
-                 save_show='show', projection='ortho')
+                 save_show='show', projection='ortho'))
+```
 
   This module takes data lists 'x_stokes' and 'y_stokes', which are obtained using the module stokes_math.math(signal_I, signal_Q, signal_U), and creates a 2D histogram of the data.
 
@@ -88,11 +94,14 @@ stokes_tester.plotstokesQU(obsID, x_stokes, y_stokes, ra, dec,
   save_show: Options are 'save' and 'show'. 'Save' option saves the plot as whatever type
   of file has been specified.
 
-  projection: The map projection for the mapping module plothealpix_map. The default for run_data is 'cyl'.
+  projection: The map projection for the mapping module plot_map. The default for run_data is 'cyl'.
   'ortho' is a good projection if you want to see curved RA and Dec lines, while 'cyl' matches up with the drapery plot.
   Other projections include 'ortho', 'cyl', 'merc', 'moll' and more, detailed in the matplotlib package Basemap.
 
-lic_maps.LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=True,
-        disp_drapery='save', name_of_plot='flow-image.png', transparency=1)
+```
+lic_maps.LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
+        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False,
+        name_of_interp_plot='interpolated_theta.jpg')
+```
 
   This module creates a 'drapery' plot of stokes linear polarizations.  The direction of polarization at every point is represented visually as a texture or draping of the angles.

@@ -2,7 +2,7 @@ import lic_maps
 import plotstokesQ_U
 import stokes_math
 import fits_data_extraction
-import plothealpix_map
+import plot_map
 import stokes_histogram
 import os
 import re
@@ -71,7 +71,7 @@ def run_data(filename_Q, filename_U, filename_I, plot_variable=None,
                           new_histogram_filename=histogram_filename, directory=None,
                           save_show=save_show, projection=projection)
         if plot_variable is not None:
-            plothealpix_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
+            plot_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
                                     map_file_name=map_filename, projection=projection, save_show=save_show, full_image=False)
 
         else:
@@ -89,14 +89,14 @@ def run_data(filename_Q, filename_U, filename_I, plot_variable=None,
     # A selected variable mapped onto some map projection
     elif graph_selection is 'map':
         if plot_variable is not None:
-            plothealpix_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
+            plot_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
                                     map_file_name=map_filename, projection=projection, save_show=save_show, full_image=False)
 
         else:
             raise ValueError('Must have mapping variable and variable name inputs to plot map.')
 
     elif graph_selection is 'overlay':
-        plothealpix_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
+        plot_map.mapping(ra, dec, map_data_var, plot_variable, obsID=obsID,
                                 map_file_name=map_filename, projection=projection, save_show=save_show, full_image=False)
         lic_maps.LIC(obsID, x_stokes, y_stokes, ra, dec, 200, 1000, length=lic_length, width=lic_width, full_image=False,
                      disp_drapery=save_show, name_of_plot=drapery_filename, transparency=transparency, interp_theta=interp_theta)

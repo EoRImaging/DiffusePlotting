@@ -5,7 +5,7 @@ import math
 from numpy import interp
 import lic_internal
 import stokes_math
-import plothealpix_map
+import plot_map
 import fits_data_extraction
 import copy
 import matplotlib.pyplot as plt
