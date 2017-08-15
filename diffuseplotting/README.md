@@ -5,7 +5,7 @@ of a set of Stokes data files, I, Q, and U.
 
 ## Functions
 
-##### Stokes Plotting and Line Integral Convolution (LIC) Plots
+### Stokes Plotting and Line Integral Convolution (LIC) Plots
 The run_data module is a wrapper that allows you to create multiple kinds of plots of the same
 data.  It expects to be given fits files.
 
@@ -140,3 +140,46 @@ This module creates a 'drapery' plot of stokes linear polarizations.  The direct
   **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
 
   Note: The option interp_theta default is to save the file.  This is because there are some artifacts that sometimes appear when plotting the data using the plot_map module, that are only visible if the plot is saved to a publication-quality file type such as jpg, pdf or eps.
+
+### Minor Modules that make the above work
+
+**fits_data_extraction**
+
+```
+cutout_square(ra, dec)
+```
+
+This function selects the largest rectangular shape that fits inside an area of data.  This is what is called when the full_image option is set to False.
+
+```
+healpix_to_RA_dec(nside, pixelnum, ordering='ring')
+```
+
+This function converts a healpix formatted file to RA and Dec instead of nside and pixelnumber.  If you choose the wrong ordering, the data will appear as one long streak of data instead of a rectangular or ovoid shape.  Options for **ordering** are 'ring' and 'nested'.
+
+```
+fits_extractor(filename_Q, filename_U, filename_I, coords='RA_dec')
+```
+
+This function takes fits data files and returns signal info.
+
+**returns**:
+signal_Q, signal_U, signal_I, nside_Q, pixels_Q, ordering_Q
+All three fits files need to be the same nside, pixel number, and ordering style in order to use this function.
+
+```
+math(I, Q, U)
+```
+
+Inputs signals of I, Q, and U, and outputs K, theta, x_stokes, and y_stokes.
+
+**K** is the magnitude of Q and U combined. In other words, it is the sum of all linear polarization.
+
+**theta** is the angle in reference to an x-y coordinate system of a signal's Q and U components.
+
+**x_stokes and y_stokes** are the projections onto the x and y axes of theta.
+
+```
+haversine(lon1, lat1, lon2, lat2)
+```
+This is basically only necessary in order to make basemap work in plot_map. It calculates the great-circle distance between two points on Earth.
