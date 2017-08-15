@@ -9,15 +9,17 @@ import plothealpix_map
 import fits_data_extraction
 import copy
 import matplotlib.pyplot as plt
+import matplotlib.axes as axes
+from matplotlib.colors import LinearSegmentedColormap
 # automatically focuses at center
 
 
-def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=True,
-        disp_drapery='save', name_of_plot='flow-image.png'):
-    #filename_Q = 'data/4pol/1130789944_uniform_Residual_Q_HEALPix.fits'
-    #filename_U = 'data/4pol/1130789944_uniform_Residual_U_HEALPix.fits'
-    #filename_I = 'data/4pol/1130789944_uniform_Residual_I_HEALPix.fits'
+def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
+        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False,
+        name_of_interp_plot='interpolated_theta.jpg'):
 
+    x_stokes_rotated = -y_stokes
+    y_stokes_rotated = x_stokes
     dpi = dpi
     if full_image is True:
         mean_ra = np.mean(ra)
@@ -51,11 +53,12 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=Tru
     indices = (np.where((ra >= lower_ra) & (ra <= upper_ra) &
                         (dec >= lower_dec) & (dec <= upper_dec)))
     #print indices
-    x_stokes = x_stokes[indices]
-    y_stokes = y_stokes[indices]
+
+    x_stokes_rotated = x_stokes_rotated[indices]
+    y_stokes_rotated = y_stokes_rotated[indices]
     ra = ra[indices]
     dec = dec[indices]
-    #plothealpix_map.mapping(ra, dec, K, 'K', )
+
     x = ra_reg[:, np.newaxis]
     y = dec_reg[np.newaxis, :]
     x = np.repeat(x, y_size, axis=1).flatten()
@@ -63,11 +66,39 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=Tru
     #print ra_reg
     #print dec_reg
     # theta = np.arctan(y_stokes / x_stokes) + np.pi/2
-    xval = griddata((ra, dec), x_stokes, (x, y), method='nearest')
-    yval = griddata((ra, dec), y_stokes, (x, y), method='nearest')
+    xval = griddata((ra, dec), x_stokes_rotated, (x, y), method='nearest')
+    yval = griddata((ra, dec), y_stokes_rotated, (x, y), method='nearest')
+
 
     xval = np.reshape(xval, (x_size, y_size))
     yval = np.reshape(yval, (x_size, y_size))
+
+    if interp_theta is True:
+        K3 = np.sqrt(xval**2 + yval**2)
+        theta3 = np.arcsin(xval / K3)
+        cdict1 = {'red':   ((0.0, 0.0, 0.0),
+                            (0.25, 0.5, 0.5),
+                            (0.5, 1.0, 1.0),
+                            (0.75, 0.5, 0.5),
+                            (1.0, 0.0, 0.0)),
+
+                 'green':   ((0.0, 0.0, 0.0),
+                             (0.25, 0.5, 0.5),
+                             (0.5, 1.0, 1.0),
+                             (0.75, 0.5, 0.5),
+                             (1.0, 0.0, 0.0)),
+
+                 'blue':    ((0.0, 0.0, 0.0),
+                             (0.25, 0.5, 0.5),
+                             (0.5, 1.0, 1.0),
+                             (0.75, 0.5, 0.5),
+                             (1.0, 0.0, 0.0)),
+                 }
+
+        circular = LinearSegmentedColormap('BlueRed1', cdict1)
+        goober = plt.imshow(theta3, cmap=circular)
+        plt.imsave(name_of_interp_plot, theta3, cmap=circular)
+        print "saved interpolated data to " + name_of_interp_plot
 
     vectors = np.zeros((len(ra_reg), len(dec_reg), 2), dtype=np.float32)
     vectors[:, :, 0] = xval
@@ -75,8 +106,11 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=Tru
 
     # lic_internal is configured for texture shape in the order (y, x)
     # instead of (x, y)
-    texture = np.random.rand(y_size, x_size).astype(np.float32)
-    plt.figure()
+    original_texture = np.random.rand(y_size, x_size).astype(np.float32)
+    texture = np.random.rand(int(np.ceil(y_size / width)), int(np.ceil(x_size / width))).astype(np.float32)
+    text = np.repeat(np.repeat(texture, int(width), axis=0), int(width), axis=1)
+    text = text[0:y_size, 0:x_size]
+    fig = plt.figure()
 
     plt.bone()
     frame = 0
@@ -88,7 +122,7 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=Tru
 
             kernel = kernel.astype(np.float32)
 
-            image = lic_internal.line_integral_convolution(vectors, texture, kernel)
+            image = lic_internal.line_integral_convolution(vectors, text, kernel)
 
             plt.clf()
             plt.axis('off')
@@ -100,19 +134,19 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=31, full_image=Tru
         kernellen = length
         kernel = np.sin(np.arange(kernellen) * np.pi / kernellen)
         kernel = kernel.astype(np.float32)
-        image = lic_internal.line_integral_convolution(vectors, texture, kernel)
+        image = lic_internal.line_integral_convolution(vectors, text, kernel)
 
-        plt.clf()
-        plt.axis('off')
-        plt.title('{} drapery'.format(obsID))
-        plt.figimage(image, resize=True)
-        plt.gcf().set_size_inches((x_size / float(dpi), y_size / float(dpi)))
+        #plt.clf()
+        #plt.axis('equal')
+        plt.imshow(image, aspect='equal', alpha=transparency, extent=(lower_ra, upper_ra, lower_dec, upper_dec))
+        #plt.figimage(image, resize=True)
+        #plt.gcf().set_size_inches((x_size / float(dpi), y_size / float(dpi)))
+
         if disp_drapery == 'save':
-            plt.gcf().savefig(name_of_plot)
-            # plt.savefig(name_of_plot, dpi=dpi)
-            # plt.imsave(name_of_plot, image)
+            plt.savefig(name_of_plot)
             print 'saved drapery to ' + name_of_plot
         elif disp_drapery == 'show':
             plt.show()
         elif disp_drapery == 'none':
             print "drapery plot not created"
+        #return plt.imshow(image, aspect='auto', alpha=transparency, extent=(lower_ra, upper_ra, lower_dec, upper_dec))

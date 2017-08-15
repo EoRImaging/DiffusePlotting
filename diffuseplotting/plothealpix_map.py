@@ -3,6 +3,7 @@ import numpy as np
 import healpy as hp
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+from matplotlib.colors import LinearSegmentedColormap
 import warnings
 import matplotlib.cbook
 import haversine_function
@@ -12,27 +13,36 @@ import matplotlib.tri as tri
 import matplotlib.colors as colors
 import os
 import re
+import seaborn as sns
 
 
 warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 # This module can map various types of data onto a spherical projection.
 # plotfile is the name of the saved plot. data_vals is the third dimension to be plotted.
 # def mapping(ra, dec, data_vals, var_name, map_file_name=None, projection='ortho', save_show='show', file_extension='.png'):
-def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None, projection='ortho', save_show='show'):
+def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
+            projection='ortho', save_show='show', full_image=True):
 
     ra[np.where(ra > 180)] -= 360
     # plot of Galactic gas with coordinate projection
+    if full_image is True:
+        min_ra = np.min(ra)
+        max_ra = np.max(ra)
+        mean_ra = np.mean(ra)
+        min_dec = np.min(dec)
+        max_dec = np.max(dec)
+        mean_dec = np.mean(dec)
 
-    min_ra = np.min(ra)
-    max_ra = np.max(ra)
-    mean_ra = np.mean(ra)
-    min_dec = np.min(dec)
-    max_dec = np.max(dec)
-    mean_dec = np.mean(dec)
+    elif full_image is False:
+        max_ra, min_ra, max_dec, min_dec =\
+            fits_data_extraction.cutout_square(ra, dec)
+        mean_ra = (max_ra + min_ra) / 2
+        mean_dec = (min_dec + max_dec) / 2
+
     # print('RA min, max, mean: ', min_ra, max_ra, mean_ra)
     # print('Dec min, max, mean: ', min_dec, max_dec, mean_dec)
 
-    print('{p} projection'.format(p=projection))
+    #print('{p} projection'.format(p=projection))
     if 'no corners' in projection_params[projection]:
         if 'bounding_lat' in projection_params[projection]:
             if projection in ['nplaea', 'npstere', 'npaeqd']:
@@ -109,23 +119,53 @@ def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None, projec
     x, y = m(ra, dec)
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
     # types of contour plots are pcolor, and contourf.
+
+
+    cdict1 = {'red':   ((0.0, 0.0, 0.0),
+                        (0.25, 0.5, 0.5),
+                        (0.5, 1.0, 1.0),
+                        (0.75, 0.5, 0.5),
+                        (1.0, 0.0, 0.0)),
+
+             'green':   ((0.0, 0.0, 0.0),
+                         (0.25, 0.5, 0.5),
+                         (0.5, 1.0, 1.0),
+                         (0.75, 0.5, 0.5),
+                         (1.0, 0.0, 0.0)),
+
+             'blue':    ((0.0, 0.0, 0.0),
+                         (0.25, 0.5, 0.5),
+                         (0.5, 1.0, 1.0),
+                         (0.75, 0.5, 0.5),
+                         (1.0, 0.0, 0.0)),
+             }
+
+    circular = LinearSegmentedColormap('BlueRed1', cdict1)
+
+
     if var_name is 'sources':
         #plt.plot(x, y, ".")
-        m.scatter(x, y, 3, marker='.', linewidths=.1, c=data_vals) #, cmap=plt.cm.plasma)  # norm=LogNorm())
+        image = m.scatter(x, y, 3, marker='.', linewidths=.1, c=data_vals) #, cmap=plt.cm.plasma)  # norm=LogNorm())
         print "scatter"
     else:
-        #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, bins='log')  # norm=colors.LogNorm())
-        # m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
-        m.contourf(x, y, data_vals, tri=True)
+        #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, bins='log', norm=colors.LogNorm())
+        #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
+        image = m.contourf(x, y, data_vals, tri=True, cmap=circular)
+        #image = m.pcolor(x, y, data_vals, tri=True, cmap=circular)
+        #image.set_edgecolor("face")
+        for c in image.collections:
+            c.set_edgecolor("face")
         m.colorbar()
     # draw parallels and meridians. Labels are 1/0 as [Top,bottom,right,left]
     m.drawparallels(np.arange(-90., 120., 5.), labels=[1, 0, 0, 0])
     m.drawmeridians(np.arange(0., 420., 5.), labels=[0, 0, 0, 1])
     # var_name = ''.join(var_name)
+    #plt.imshow((x, y), aspect='auto', extent=(min_ra, max_ra, min_dec, max_dec))
+
     if obsID is not None:
-        plt.title('{} {} map'.format(obsID, var_name))
+        plt.title('{} {} map: {} proj.'.format(obsID, var_name, projection))
     else:
-        plt.title('{} map'.format(var_name))
+        plt.title('{} map: {} proj.'.format(var_name, projection))
     # either show the graphs, or save them to a location.
     if save_show == 'show':
         plt.show()
@@ -133,7 +173,7 @@ def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None, projec
         print "polarization map not displayed"
     elif save_show == 'save':
         new_map_file = map_file_name
-        plt.savefig(new_map_file)
+        plt.savefig(new_map_file, dpi=200)
         print 'saved mapped data to ' + new_map_file
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')

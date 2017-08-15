@@ -19,12 +19,16 @@ import healpix_functions
 import fits_data_extraction
 import stokes_math
 
-
-def plotstokesQ_U(filename_Q, filename_U, filename_I, map_var='theta',
+"""
+def plotstokesQ_U(ra, dec, signal_Q, signal_U, signal_I, map_var='theta',
                   histogram_plotfile_base=None, map_plotfile_base=None, plotdirectory=None,
                   save_show='show', file_extension='.png', projection='ortho'):
-    signal_Q, signal_U, signal_I, ra, dec =\
-        fits_data_extraction.fits_extractor(filename_Q, filename_U, filename_I)
+"""
+def plotstokesQ_U(signal_Q, signal_U, signal_I, ra, dec, histogram_title, map_var='theta',
+                  directory=None,
+                  save_show='show', file_extension='.png', projection='ortho'):
+    #signal_Q, signal_U, signal_I, ra, dec =\
+    #    fits_data_extraction.fits_extractor(filename_Q, filename_U, filename_I)
     """
     # we set information from a fits file. theta is in radians.
     # x_stokes and y_stokes are the x and y components of points found using theta and magnitude.
@@ -34,7 +38,7 @@ def plotstokesQ_U(filename_Q, filename_U, filename_I, map_var='theta',
     outliers_theta = [theta[np.all([K >= .1], axis=0)]]
     x_stokes_out = np.cos(outliers_theta) * outliers_K
     y_stokes_out = np.sin(outliers_theta) * outliers_K
-    """
+
     # setting file and path names
     filename_Q = os.path.split(filename_Q)[-1]
     filename_U = os.path.split(filename_U)[-1]
@@ -55,7 +59,7 @@ def plotstokesQ_U(filename_Q, filename_U, filename_I, map_var='theta',
     path_map_plotfile_base = os.path.join(plotdirectory, map_plotfile_base)
     histogram_plotfile = path_histogram_plotfile_base + file_extension
     map_plotfile = path_map_plotfile_base + file_extension
-
+    """
     K, theta, x_stokes, y_stokes = stokes_math.math(signal_I, signal_Q, signal_U)
 
     # plots selected third variable to map
@@ -80,27 +84,26 @@ def plotstokesQ_U(filename_Q, filename_U, filename_I, map_var='theta',
     else:
         raise ValueError("unrecognized map_var")
 
-    plothealpix_map.mapping(ra, dec, map_data_var, map_var, newplotfile_base=map_plotfile_base, projection=projection,
+    plothealpix_map.mapping(ra, dec, map_data_var, map_var, newplotfile_base=histogram_title, projection=projection,
                                             save_show=save_show, file_extension=file_extension)
-
     # manipulate histogram for number of bins, color scheme.
     # histogram is of 'angle' of polarization between Stokes Q and Stokes U.
     plt.hist2d(x_stokes, y_stokes, bins=150, norm=LogNorm(), cmap=plt.cm.plasma)
     plt.colorbar()
-    plt.title(histogram_plotfile_base)
-    plt.title('ObsID {} polarization angle vs magnitude'.format([int(s) for s in re.findall('\d+', histogram_plotfile_base)]))
-    plt.title(os.path.split(histogram_plotfile_base)[-1])
+    plt.title(histogram_title)
+    plt.title('ObsID {} polarization angle vs magnitude'.format([int(s) for s in re.findall('\d+', histogram_title)]))
+    plt.title(os.path.split(histogram_title)[-1])
 
     # either show the histogram, or save it to a location.
     if save_show == 'show':
-        plt.show(histogram_plotfile)
+        plt.show(histogram_title)
     elif save_show == 'none':
         print "histogram not displayed"
     elif save_show == 'save':
-        plt.savefig(histogram_plotfile)
-        print 'saved polarization histogram to ' + histogram_plotfile
+        plt.savefig(histogram_title)
+        print 'saved polarization histogram to ' + histogram_title
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')
 
     # x_stokes and y_stokes are the vector components necessary to create a drapery plot.
-    return ra, dec, x_stokes, y_stokes
+    return x_stokes, y_stokes

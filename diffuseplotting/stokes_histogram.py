@@ -19,7 +19,7 @@ import fits_data_extraction
 import stokes_math
 
 
-def plotstokesQU(obsID, x_stokes, y_stokes, ra, dec, map_var='theta',
+def plotstokesQU(obsID, x_stokes, y_stokes, ra, dec,
                  new_histogram_filename=None, directory=None,
                  save_show='show', projection='ortho'):
 
