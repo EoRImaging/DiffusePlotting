@@ -5,7 +5,7 @@ of a set of Stokes data files, I, Q, and U.
 
 ## Functions
 
-######Stokes Plotting and Line Integral Convolution (LIC) Plots
+##### Stokes Plotting and Line Integral Convolution (LIC) Plots
 The run_data module is a wrapper that allows you to create multiple kinds of plots of the same
 data.  It expects to be given fits files.
 
@@ -50,6 +50,7 @@ run_data(filename_Q, filename_U, filename_I, plot_variable=None,
   **directory**: If you want to put the plots in a different directory than the current working directory.
   If a directory with the name inputted doesn't exist, one will be created.
 
+
 ```
 plot_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
             projection='ortho', save_show='show', full_image=True)
@@ -76,6 +77,7 @@ plot_map.mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
   of file has been specified.
 
   **full_image**: If True, the window will attempt to show all the data.  If False, the maximum rectangular shape that fits inside the circle of data is selected. This area is selected with the module fits_data_extraction.cutout_square(ra, dec).
+
 
 ```
 stokes_histogram.plotstokesQU((obsID, x_stokes, y_stokes, ra, dec,
@@ -113,28 +115,28 @@ This module creates a 'drapery' plot of stokes linear polarizations.  The direct
 
   **obsID**: The Obs ID of the area of data
 
-    **x_stokes and y_stokes** are the projections onto a single axis, of the relationship between the Q and U axes.  These axes are at 45-degree angles to each other, making this transform necessary.  You get them using the stokes_math module.
+  **x_stokes and y_stokes** are the projections onto a single axis, of the relationship between the Q and U axes.  These axes are at 45-degree angles to each other, making this transform necessary.  You get them using the stokes_math module.
 
-    **ra, dec**: The coordinates of the data points.
+  **ra, dec**: The coordinates of the data points.
 
-    **dpi**: The "resolution" of the output image.  Recommended dpi is 200-300.
+  **dpi**: The "resolution" of the output image.  Recommended dpi is 200-300.
 
-    **size**: The approximate number of dots across. LIC finds an aspect ratio from this information and uses it to scale the x and y directions.  Size will be the x direction.
+  **size**: The approximate number of dots across. LIC finds an aspect ratio from this information and uses it to scale the x and y directions.  Size will be the x direction.
 
-    **length**: Dictates the length of the "lines" for a drapery plot.  Large values (1000s) will make flow patterns more obvious, while small values show more detail.  This is affected by how large the area of data is.
+  **length**: Dictates the length of the "lines" for a drapery plot.  Large values (1000s) will make flow patterns more obvious, while small values show more detail.  This is affected by how large the area of data is.
 
-    **width**: Dictates the size of the randomly generated pixels used in the LIC.  Larger values will reduce detail but make flow lines thicker and more easily followed by eye.  Must be a float. Default is 2., which increases the length of each pixel side by 2x, and increases the area of each randomly generated 'pixel' by 4.
+  **width**: Dictates the size of the randomly generated pixels used in the LIC.  Larger values will reduce detail but make flow lines thicker and more easily followed by eye.  Must be a float. Default is 2., which increases the length of each pixel side by 2x, and increases the area of each randomly generated 'pixel' by 4.
 
-    **full_image**: If True, the window will attempt to show all the data.  If False, the maximum rectangular shape that fits inside the circle of data is selected. This area is selected with the module fits_data_extraction.cutout_square(ra, dec).
+  **full_image**: If True, the window will attempt to show all the data.  If False, the maximum rectangular shape that fits inside the circle of data is selected. This area is selected with the module fits_data_extraction.cutout_square(ra, dec).
 
-    **disp_drapery**: Can be 'save' or 'show'.
+  **disp_drapery**: Can be 'save' or 'show'.
 
-    **name_of_plot**: The location of the file the plot will go in. Needs to include the extension if not using run_data module.
+  **name_of_plot**: The location of the file the plot will go in. Needs to include the extension if not using run_data module.
 
-    **transparency**: this dictates the transparency of the drapery plot.  This is useful for the 'overlay' option, if you want to use the map with the drapery of the same data on top of it.
+  **transparency**: this dictates the transparency of the drapery plot.  This is useful for the 'overlay' option, if you want to use the map with the drapery of the same data on top of it.
 
-    **interp_theta**: If True, this will make a basic plot of the data after it's been interpolated to a regular grid.
+  **interp_theta**: If True, this will make a basic plot of the data after it's been interpolated to a regular grid.
 
-    **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
+  **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
 
-    Note: The option interp_theta default is to save the file.  This is because there are some artifacts that sometimes appear when plotting the data using the plot_map module, that are only visible if the plot is saved to a publication-quality file type such as jpg, pdf or eps.
+  Note: The option interp_theta default is to save the file.  This is because there are some artifacts that sometimes appear when plotting the data using the plot_map module, that are only visible if the plot is saved to a publication-quality file type such as jpg, pdf or eps.
