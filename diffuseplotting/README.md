@@ -12,7 +12,7 @@ data.  It expects to be given fits files.
 ```
 run_data(filename_Q, filename_U, filename_I, plot_variable=None,
             save_show='show', graph_selection='all', file_extension='.png', projection='cyl', transparency=1,
-            interp_theta=False, lic_length=1000, lic_width=2., directory=None,
+            interp_theta=False, lic_length=1000, lic_width=2., polarization=1, directory=None,
             histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None)
 ```
 **Parameter Options**
@@ -41,6 +41,8 @@ run_data(filename_Q, filename_U, filename_I, plot_variable=None,
   **lic_length**: Dictates the length of the "lines" for a drapery plot.  Large values (1000s) will make flow patterns more obvious, while small values show more detail.  This is affected by how large the area of data is.
 
   **lic_width**: Dictates the size of the randomly generated pixels used in the LIC.  Larger values will reduce detail but make flow lines thicker and more easily followed by eye.  Must be a float. Default is 2., which increases the area of each randomly generated 'pixel' by 4.
+
+  **polarization**: Options are 1 or 2.  This basically allows you to switch which direction the flow lines in the LIC will flow, by 90 degrees.  This is helpful if you see a lot of lines that seem to be parallel to each other and very short.  Possibly the flow will be more visible by trying the other polarization. Default is 1.  If you choose the 2 option, the interpolated_theta plot will not work, but the color-scheme of the map is such that it won't matter.  Just use a map plotted using plot_map or lic_maps where polarization=1.
 
   **histogram_file_basename, map_file_basename, drapery_file_basename**: Defaults are None.
   If not given an input, run_data will extract the ObsID from filename_Q and append it with variable information.
@@ -109,7 +111,7 @@ stokes_histogram.plotstokesQU((obsID, x_stokes, y_stokes, ra, dec,
 ```
 lic_maps.LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
         disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False, rotate=False,
-        name_of_interp_plot='interpolated_theta.jpg')
+        name_of_interp_plot='interpolated_theta.jpg', polarization=1)
 ```
 This module creates a 'drapery' plot of stokes linear polarizations.  The direction of polarization at every point is represented visually as a texture or draping of the angles.
 
@@ -142,6 +144,8 @@ This module creates a 'drapery' plot of stokes linear polarizations.  The direct
   **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
 
   Note: The option interp_theta default is to save the file.  This is because there are some artifacts that sometimes appear when plotting the data using the plot_map module, that are only visible if the plot is saved to a publication-quality file type such as jpg, pdf or eps.
+
+  **polarization**: Options are 1 or 2.  This basically allows you to switch which direction the flow lines will flow by 90 degrees.  This is helpful if you see a lot of lines that seem to be parallel to each other and very short.  Possibly the flow will be more visible by trying the other polarization. Default is 1.  If you choose the 2 option, the interpolated_theta plot will not work, but the color-scheme of the map is such that it won't matter.  Just use a map plotted using plot_map or lic_maps where polarization=1.
 
 ### Minor Modules that make the above work
 
