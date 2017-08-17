@@ -108,7 +108,7 @@ stokes_histogram.plotstokesQU((obsID, x_stokes, y_stokes, ra, dec,
 
 ```
 lic_maps.LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
-        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False,
+        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False, rotate=False,
         name_of_interp_plot='interpolated_theta.jpg')
 ```
 This module creates a 'drapery' plot of stokes linear polarizations.  The direction of polarization at every point is represented visually as a texture or draping of the angles.
@@ -136,6 +136,8 @@ This module creates a 'drapery' plot of stokes linear polarizations.  The direct
   **transparency**: this dictates the transparency of the drapery plot.  This is useful for the 'overlay' option, if you want to use the map with the drapery of the same data on top of it.
 
   **interp_theta**: If True, this will make a basic plot of the data after it's been interpolated to a regular grid.
+
+  **rotate**: Default is false.  If True, "rotates" the polarizations of the points.
 
   **name_of_interp_plot**: If interp_theta is True, the name of the plot to be saved out.
 

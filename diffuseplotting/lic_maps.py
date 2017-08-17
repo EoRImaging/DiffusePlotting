@@ -5,7 +5,7 @@ import math
 from numpy import interp
 import lic_internal
 import stokes_math
-import plot_map
+import plothealpix_map
 import fits_data_extraction
 import copy
 import matplotlib.pyplot as plt
@@ -15,11 +15,17 @@ from matplotlib.colors import LinearSegmentedColormap
 
 
 def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
-        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False,
-        name_of_interp_plot='interpolated_theta.jpg'):
+        disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False, rotate=False,
+        name_of_interp_plot='interpolated_theta1.jpg', polarization=2):
 
-    x_stokes_rotated = -y_stokes
-    y_stokes_rotated = x_stokes
+    if polarization == 1:
+        x_stokes = x_stokes
+        y_stokes = y_stokes
+    elif polarization == 2:
+        x_stokes_rotated = -y_stokes
+        y_stokes_rotated = x_stokes
+        x_stokes = x_stokes_rotated
+        y_stokes = y_stokes_rotated
     dpi = dpi
     if full_image is True:
         mean_ra = np.mean(ra)
@@ -54,11 +60,22 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., fu
                         (dec >= lower_dec) & (dec <= upper_dec)))
     #print indices
 
-    x_stokes_rotated = x_stokes_rotated[indices]
-    y_stokes_rotated = y_stokes_rotated[indices]
+    x_stokes = x_stokes[indices]
+    y_stokes = y_stokes[indices]
+    #x_stokes_rotated = x_stokes_rotated[indices]
+    #y_stokes_rotated = y_stokes_rotated[indices]
+
+    #if rotate=True:
+    #    x_stokes = x_stokes_rotated
+    #    y_stokes = y_stokes_rotated
+
     ra = ra[indices]
     dec = dec[indices]
-
+    #K2 = np.sqrt(x_stokes**2 + y_stokes**2)
+    #theta2 = np.arcsin(x_stokes / K2)
+    #plothealpix_map.mapping(ra, dec, theta2, 'theta', obsID=None, map_file_name=None,
+    #        projection='ortho', save_show='show', full_image=True)
+    #plothealpix_map.mapping(ra, dec, K, 'K', )
     x = ra_reg[:, np.newaxis]
     y = dec_reg[np.newaxis, :]
     x = np.repeat(x, y_size, axis=1).flatten()
@@ -66,8 +83,8 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., fu
     #print ra_reg
     #print dec_reg
     # theta = np.arctan(y_stokes / x_stokes) + np.pi/2
-    xval = griddata((ra, dec), x_stokes_rotated, (x, y), method='nearest')
-    yval = griddata((ra, dec), y_stokes_rotated, (x, y), method='nearest')
+    xval = griddata((ra, dec), x_stokes, (x, y), method='nearest')
+    yval = griddata((ra, dec), y_stokes, (x, y), method='nearest')
 
 
     xval = np.reshape(xval, (x_size, y_size))
@@ -96,8 +113,13 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., fu
                  }
 
         circular = LinearSegmentedColormap('BlueRed1', cdict1)
-        goober = plt.imshow(theta3, cmap=circular)
-        plt.imsave(name_of_interp_plot, theta3, cmap=circular)
+        print theta3.shape
+        theta3 = np.rot90(theta3, 1, axes=(0,1))
+        goober = plt.imshow(theta3, cmap=circular, aspect='equal', extent=(lower_ra, upper_ra, lower_dec, upper_dec))
+        plt.gca().invert_xaxis()
+        plt.colorbar()
+        #plt.imsave(name_of_interp_plot, theta3, cmap=circular, aspect='equal', extent=(lower_ra, upper_ra, lower_dec, upper_dec))
+        plt.savefig(name_of_interp_plot)
         print "saved interpolated data to " + name_of_interp_plot
 
     vectors = np.zeros((len(ra_reg), len(dec_reg), 2), dtype=np.float32)
@@ -139,6 +161,7 @@ def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., fu
         #plt.clf()
         #plt.axis('equal')
         plt.imshow(image, aspect='equal', alpha=transparency, extent=(lower_ra, upper_ra, lower_dec, upper_dec))
+        plt.gca().invert_xaxis()
         #plt.figimage(image, resize=True)
         #plt.gcf().set_size_inches((x_size / float(dpi), y_size / float(dpi)))
 

@@ -151,6 +151,7 @@ def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
         #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, bins='log', norm=colors.LogNorm())
         #m.contourf(x, y, data_vals, tri=True, cmap=plt.cm.plasma, norm=LogNorm())
         image = m.contourf(x, y, data_vals, tri=True, cmap=circular)
+        fig.gca().invert_xaxis()
         #image = m.pcolor(x, y, data_vals, tri=True, cmap=circular)
         #image.set_edgecolor("face")
         for c in image.collections:

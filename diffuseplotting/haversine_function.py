@@ -1,6 +1,6 @@
 from math import radians, cos, sin, asin, sqrt
 
-# we only want longitude in order to configure the plothealpix_map module.
+# we only want longitude in order to configure the plot_map module.
 def haversine(lon1, lat1, lon2, lat2):
     # Calculate the great circle distance between two points
     # on the earth (specified in decimal degrees)
