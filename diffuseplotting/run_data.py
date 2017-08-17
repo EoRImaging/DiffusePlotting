@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 def run_data(filename_Q, filename_U, filename_I, plot_variable=None,
              save_show='show', graph_selection='all', file_extension='.png', projection='cyl', transparency=1,
-             interp_theta=False, lic_length=1000, lic_width=2., polarization=1, directory=None,
+             interp_theta=False, lic_length=1000, lic_width=8., polarization=1, directory=None,
              histogram_file_basename=None, map_file_basename=None, drapery_file_basename=None):
     signal_Q, signal_U, signal_I, ra, dec =\
         fits_data_extraction.fits_extractor(filename_Q, filename_U, filename_I)
