@@ -174,7 +174,7 @@ def mapping(ra, dec, data_vals, var_name, obsID=None, map_file_name=None,
         print "polarization map not displayed"
     elif save_show == 'save':
         new_map_file = map_file_name
-        plt.savefig(new_map_file, dpi=200)
+        plt.savefig(new_map_file, dpi=300)
         print 'saved mapped data to ' + new_map_file
     else:
         raise ValueError('save_show needs to be equal to "save" or "show" to save or show the image.')

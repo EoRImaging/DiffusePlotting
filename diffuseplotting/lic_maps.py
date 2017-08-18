@@ -16,7 +16,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 def LIC(obsID, x_stokes, y_stokes, ra, dec, dpi, size, length=1000, width=8., full_image=True,
         disp_drapery='save', name_of_plot='flow-image.png', transparency=1, interp_theta=False, rotate=False,
-        name_of_interp_plot='interpolated_theta1.jpg', polarization=2):
+        name_of_interp_plot='interpolated_theta.jpg', polarization=2):
 
     if polarization == 1:
         x_stokes = x_stokes
